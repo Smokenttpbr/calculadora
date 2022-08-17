@@ -16,6 +16,7 @@ const MakeCalculator = (children,props)=> {
     
     const [StoredNumber1,change] = useState('');
     const [StoredNumber2,change2] = useState('');
+    const [Historic, changeList] = useState([]);
     const [Operation, isDone] = useState(false);
     const [Addition, addOP] = useState(false);
     const [Subtraction, subOP] = useState(false);
@@ -168,6 +169,8 @@ const MakeCalculator = (children,props)=> {
             }
     } ;
 
+    // allows for the existence of only a single dot for the react to work with decimal numbers 
+    //without any issue
     const addNumberDot = (e)=>{
         
        if(!DecimalExistence){
@@ -225,6 +228,8 @@ const MakeCalculator = (children,props)=> {
         setInputData('');
     };
 
+    //By multiplying the numbers by 1 the java reinterpretes then as numbers rather then strings 
+    //so the math operations can be done properly
     const addNumberE = (e)=>{
         change2(InputData + e.target.value);
 
@@ -253,8 +258,26 @@ const MakeCalculator = (children,props)=> {
 
     } ;
 
+    // Since the historic is controlled by state we cant directly splice the array so 
+    //i am making a secound array here based on historic and then splicing this one in order to safely remove 
+    //an item from the array without messing with the states
     const Equallize = (e) => {
-       
+        const HistNumber = (e*1);
+        if(Historic.length <=9){
+            changeList(Historic => [...Historic , HistNumber])
+            console.log(Historic);
+        }
+        else if (Historic.length > 9){
+            const oldHistoric = Historic;
+            if (oldHistoric.length > 0){
+                oldHistoric.splice(0, 1)
+            }
+
+            changeList(Historic => [...oldHistoric , HistNumber])
+            console.log(Historic, 'limites');
+
+        }
+
             setInputData(e);
             isDone(false);
             console.log(e);
@@ -263,6 +286,8 @@ const MakeCalculator = (children,props)=> {
 return <div>
     <div>
     <InputCalc Inputs = {handleInputChange} Valor = {InputData}></InputCalc>
+    <div> Historico <InputCalc Inputs = {handleInputChange} Valor = {Historic}></InputCalc> </div>
+    
     </div>
     <div>
     <Buttons onClick = {addNumber7}>7</Buttons>
